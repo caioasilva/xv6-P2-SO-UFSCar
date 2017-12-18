@@ -515,6 +515,8 @@ procdump(void)
   struct proc *p;
   char *state;
   uint pc[10];
+  int j,k,quant=0;
+  uint pagetables[20];
 
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
     if(p->state == UNUSED)
@@ -529,6 +531,36 @@ procdump(void)
       for(i=0; i<10 && pc[i] != 0; i++)
         cprintf(" %p", pc[i]);
     }
+    
+
+    cprintf("\nPage tables:\n Memory Location of page directory = %x\n", V2P(p->pgdir));  
+    quant=0;
+    for (j=0; j<NPDENTRIES; j++){
+
+        if ((PTE_FLAGS(p->pgdir[j]) & PTE_A)&&(PTE_FLAGS(p->pgdir[j]) & PTE_U)){      
+            
+            pte_t* ptable = (pte_t*) PTE_ADDR(p->pgdir[j]);
+            cprintf(" pdir PTE %d, %d:\n  Memory location of page table = %x\n",j,(uint)ptable>>12, ptable);
+            for (k=0; k<NPTENTRIES; k++){
+
+                pte_t* endereco = (pte_t*)((pte_t*)P2V(ptable))[k];
+                uint flags = PTE_FLAGS(endereco);
+                if ((flags & PTE_A)&&(flags & PTE_U)){      
+                    cprintf("  ptbl PTE %d, %d, %x, Flags: %x\n",k,(uint)endereco>>12, PTE_ADDR(endereco), flags);
+                    pagetables[quant++] = (uint) V2P(endereco);
+                    
+                }
+            }
+            
+
+        }
+
+    }
+    cprintf("Page mappings:\nVPN -> PPN\n");
+    for(j=0; j<quant; j++){
+        cprintf("%d -> %d\n",pagetables[j]>>12,(V2P(pagetables[j]))>>12);
+    }
     cprintf("\n");
+ 
   }
 }
