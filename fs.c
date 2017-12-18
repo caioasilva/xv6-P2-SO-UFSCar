@@ -606,6 +606,9 @@ skipelem(char *path, char *name)
   s = path;
   while(*path != '/' && *path != 0)
     path++;
+  //bugfix
+  if (*(path-1)==10)
+    *(--path)=0;
   len = path - s;
   if(len >= DIRSIZ)
     memmove(name, s, DIRSIZ);
