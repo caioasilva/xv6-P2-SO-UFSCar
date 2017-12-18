@@ -6,6 +6,8 @@
 *.ko
 *.obj
 *.elf
+*.asm
+*.sym
 
 # Linker output
 *.ilk
@@ -35,6 +37,7 @@
 *.i*86
 *.x86_64
 *.hex
+_*
 
 # Debug files
 *.dSYM/
