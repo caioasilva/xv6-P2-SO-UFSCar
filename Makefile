@@ -174,6 +174,8 @@ UPROGS=\
 	_usertests\
 	_wc\
 	_zombie\
+    _elfexploit\
+    _nullpointer\
 
 fs.img: mkfs README $(UPROGS)
 	./mkfs fs.img README $(UPROGS)
